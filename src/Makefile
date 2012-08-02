@@ -21,10 +21,14 @@ include  $(PROJECT_BASE_DIR)/lib/uart_lib/lib.mk
 
 OPTIMIZE=s
 
+LFUSE_VAL=E2
+HFUSE_VAL=99
+EFUSE_VAL=ff
 
 AVRDUDE_PROGRAMMERID=jtag2isp
 AVRDUDE_FLAGS=-B40
 AVRDUDE_PORT=usb
+
 
 
 #               END USER
@@ -109,7 +113,7 @@ GENASMFILES=$(filter %.s, $(OBJDEPS:.o=.s))
 #¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
 #               TARGETS
 # all, disasm, stats, size, hex, 
-# flash/install, clean, full
+# flash/install, clean, fuse
 
 all: $(TRG) hex size
 
@@ -124,11 +128,18 @@ size: $(TRG)
         
 hex: $(HEXROMTRG)
 
+fuse:
+	$(AVRDUDE) -c $(AVRDUDE_PROGRAMMERID) $(AVRDUDE_FLAGS)  \
+	-p $(MCU_TARGET) -P $(AVRDUDE_PORT) -u                  \
+	-Ulfuse:w:0x$(LFUSE_VAL):m                              \
+	-Uhfuse:w:0x$(HFUSE_VAL):m                              \
+	-Uefuse:w:0x$(EFUSE_VAL):m
+
 
 flash: hex
 	$(AVRDUDE) -c $(AVRDUDE_PROGRAMMERID) $(AVRDUDE_FLAGS)  \
 	 -p $(MCU_TARGET) -P $(AVRDUDE_PORT) -e        \
-	 -U flash:w:$(HEXROMTRG)
+	-U flash:w:$(HEXROMTRG)	
 
 install: flash
 
