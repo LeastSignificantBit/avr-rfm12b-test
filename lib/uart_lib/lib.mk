@@ -1,3 +1,5 @@
+UART_LIB_PATH	= $(PROJECT_BASE_DIR)/lib/uart_lib
+
 SRC+=	$(UART_LIB_PATH)/uart.c
 
 INC+= -I$(UART_LIB_PATH)

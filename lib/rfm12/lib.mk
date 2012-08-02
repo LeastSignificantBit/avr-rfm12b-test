@@ -1,3 +1,5 @@
+RFM12_LIB_PATH	= $(PROJECT_BASE_DIR)/lib/rfm12
+
 SRC+=	$(RFM12_LIB_PATH)/rfm12.c 
 
 INC+= -I$(RFM12_LIB_PATH) \

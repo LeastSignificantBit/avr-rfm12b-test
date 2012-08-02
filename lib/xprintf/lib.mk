@@ -1,3 +1,5 @@
+XPRINTF_LIB_PATH= $(PROJECT_BASE_DIR)/lib/xprintf
+
 SRC+=	$(XPRINTF_LIB_PATH)xprintf.c
 
 INC+= -I$(XPRINTF_LIB_PATH)

@@ -5,6 +5,7 @@ MCU_TARGET      = atmega324p
 DEFS            = -DF_CPU=8000000
 
 PROJECTNAME=pingpong
+PROJECT_BASE_DIR = ..
 
 SRC=	pingpong.c 
         
@@ -14,13 +15,9 @@ INC= -I. \
 LIBS=
 
 # Libraries that needs building:
-RFM12_LIB_PATH	= ../lib/rfm12
-UART_LIB_PATH	= ../lib/uart_lib
-XPRINTF_LIB_PATH= ../lib/xprintf
-
-include  $(RFM12_LIB_PATH)/lib.mk
-include  $(UART_LIB_PATH)/lib.mk
-#include  $(XPRINTF_LIB_PATH)/lib.mk
+include  $(PROJECT_BASE_DIR)/lib/rfm12/lib.mk
+include  $(PROJECT_BASE_DIR)/lib/uart_lib/lib.mk
+#include  $(PROJECT_BASE_DIR)/lib/xprintf/lib.mk
 
 OPTIMIZE=s
 
