@@ -1,0 +1,3 @@
+
+#define UART_BAUD_RATE 4800
+#define UART_HEXDUMP

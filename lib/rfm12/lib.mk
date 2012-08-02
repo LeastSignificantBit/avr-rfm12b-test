@@ -1,0 +1,4 @@
+SRC+=	$(RFM12_LIB_PATH)/rfm12.c 
+
+INC+= -I$(RFM12_LIB_PATH) \
+	-I$(RFM12_LIB_PATH)/include

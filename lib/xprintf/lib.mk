@@ -1,0 +1,3 @@
+SRC+=	$(XPRINTF_LIB_PATH)xprintf.c
+
+INC+= -I$(XPRINTF_LIB_PATH)
