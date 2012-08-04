@@ -29,7 +29,8 @@ AVRDUDE_PROGRAMMERID=jtag2isp
 AVRDUDE_FLAGS=-B40
 AVRDUDE_PORT=usb
 
-
+# Set DEBUG to @ to remove extended 
+DEBUG = @
 
 #               END USER
 #¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
@@ -126,7 +127,8 @@ stats: $(TRG)
 	$(SIZE) $(TRG) 
 	
 size: $(TRG)
-	$(SIZE) $(SIZE_FLAGS) $(TRG) 
+	@echo "\n- $(TRG) -"
+	$(DEBUG)$(SIZE) $(SIZE_FLAGS) $(TRG) 
         
 hex: $(HEXROMTRG)
 
@@ -150,43 +152,53 @@ $(DUMPTRG): $(TRG)
 
 
 $(TRG): $(OBJDEPS) 
-	$(CC) $(LDFLAGS) -o $(TRG) $(OBJDEPS)
+	@echo ">> Building: $(TRG) <<"
+	$(DEBUG)$(CC) $(LDFLAGS) -o $(TRG) $(OBJDEPS)
 
 %.s: %.c
-	$(CC) -S $(CFLAGS) $< -o $@
+	@echo ">> Building: $@ <<"
+	$(DEBUG)$(CC) -S $(CFLAGS) $< -o $@
 
 %.s: %.S
-	$(CC) -S $(ASMFLAGS) $< > $@
+	@echo ">> Building: $@ <<"
+	$(DEBUG)$(CC) -S $(ASMFLAGS) $< > $@
 
 .cpp.s .cc.s .C.s :
-	$(CC) -S $(CFLAGS) $(CPPFLAGS) $< -o $@
+	@echo ">> Building: $@ <<"
+	$(DEBUG)$(CC) -S $(CFLAGS) $(CPPFLAGS) $< -o $@
 
 .c.o: 
-	$(CC) $(CFLAGS) -c $< -o $@
+	@echo ">> Building: $@ <<"
+	$(DEBUG)$(CC) $(CFLAGS) -c $< -o $@
 
 .cc.o .cpp.o .C.o :
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+	@echo ">> Building: $@ <<"
+	$(DEBUG)$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 .S.o :
-	$(CC) $(ASMFLAGS) -c $< -o $@
+	@echo ">> Building: $@ <<"
+	$(DEBUG)$(CC) $(ASMFLAGS) -c $< -o $@
 
 %.hex: %.elf
-	$(OBJCOPY) -j .text                    \
+	@echo ">> Building: $@ <<"
+	$(DEBUG)$(OBJCOPY) -j .text                    \
 		-j .data                       \
 		-O $(HEXFORMAT) $< $@
 
 dep: $(SRC)
-	$(CC) $(INC)-mmcu=$(MCU_TARGET) $(DEFS) -MM $(SRC) > $(DEPENDFILE)
+	@echo ">> Checking dependencies <<"
+	$(DEBUG)$(CC) $(INC) -mmcu=$(MCU_TARGET) $(DEFS) -MM $(SRC) > $(DEPENDFILE)
 
 -include $(DEPENDFILE)
 
 clean:
-	$(REMOVE) $(TRG) $(TRG).map $(DUMPTRG)
-	$(REMOVE) $(OBJDEPS)
-	$(REMOVE) $(LST) $(GDBINITFILE)
-	$(REMOVE) $(GENASMFILES)
-	$(REMOVE) $(HEXTRG)
-	$(REMOVE) $(DEPENDFILE)
+	@echo ">> Clean-up <<"
+	$(DEBUG)$(REMOVE) $(TRG) $(TRG).map $(DUMPTRG)
+	$(DEBUG)$(REMOVE) $(OBJDEPS)
+	$(DEBUG)$(REMOVE) $(LST) $(GDBINITFILE)
+	$(DEBUG)$(REMOVE) $(GENASMFILES)
+	$(DEBUG)$(REMOVE) $(HEXTRG)
+	$(DEBUG)$(REMOVE) $(DEPENDFILE)
 
 #            END TARGETS
 #¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
