@@ -102,6 +102,8 @@ LST=$(filter %.lst, $(OBJDEPS:.o=.lst))
 
 GENASMFILES=$(filter %.s, $(OBJDEPS:.o=.s)) 
 
+DEPENDFILE = .depend
+
 .SUFFIXES : .c .cc .cpp .C .o .out .s .S \
 	.hex .ee.hex .h .hh .hpp
 
@@ -115,7 +117,7 @@ GENASMFILES=$(filter %.s, $(OBJDEPS:.o=.s))
 # all, disasm, stats, size, hex, 
 # flash/install, clean, fuse
 
-all: $(TRG) hex size
+all: dep $(TRG) hex size
 
 disasm: $(DUMPTRG) stats
 
@@ -173,12 +175,20 @@ $(TRG): $(OBJDEPS)
 		-j .data                       \
 		-O $(HEXFORMAT) $< $@
 
+dep: $(SRC)
+	$(CC) $(INC)-mmcu=$(MCU_TARGET) $(DEFS) -MM $(SRC) > $(DEPENDFILE)
+
+-include $(DEPENDFILE)
+
 clean:
 	$(REMOVE) $(TRG) $(TRG).map $(DUMPTRG)
 	$(REMOVE) $(OBJDEPS)
 	$(REMOVE) $(LST) $(GDBINITFILE)
 	$(REMOVE) $(GENASMFILES)
 	$(REMOVE) $(HEXTRG)
+	$(REMOVE) $(DEPENDFILE)
+
 #            END TARGETS
 #¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
 	
+# DO NOT DELETE
