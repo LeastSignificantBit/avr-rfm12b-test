@@ -118,7 +118,7 @@ DEPENDFILE = .depend
 # all, disasm, stats, size, hex, 
 # flash/install, clean, fuse
 
-all: dep $(TRG) hex size
+all: $(TRG) hex size
 
 disasm: $(DUMPTRG) stats
 
@@ -185,12 +185,13 @@ $(TRG): $(OBJDEPS)
 		-j .data                       \
 		-O $(HEXFORMAT) $< $@
 
-dep: $(SRC)
-	@echo ">> Checking dependencies <<"
-	$(DEBUG)$(CC) $(INC) -mmcu=$(MCU_TARGET) $(DEFS) -MM $(SRC) > $(DEPENDFILE)
-
--include $(DEPENDFILE)
-
+%.d: %.c
+	@set -e; rm -f $@; \
+	$(CC) $(INC) -mmcu=$(MCU_TARGET) -MM $(DEFS) -MM $< > $@.$$$$; \
+	sed -n "H;$$ {g;s@.*:\(.*\)@$< := \$$\(wildcard\1\)\n$*.o $@: $$\($<\)@;p}" < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+	
+-include $(OBJDEPS:%.o=%.d)
 clean:
 	@echo ">> Clean-up <<"
 	$(DEBUG)$(REMOVE) $(TRG) $(TRG).map $(DUMPTRG)
@@ -198,7 +199,7 @@ clean:
 	$(DEBUG)$(REMOVE) $(LST) $(GDBINITFILE)
 	$(DEBUG)$(REMOVE) $(GENASMFILES)
 	$(DEBUG)$(REMOVE) $(HEXTRG)
-	$(DEBUG)$(REMOVE) $(DEPENDFILE)
+	$(DEBUG)$(REMOVE) $(OBJDEPS:%.o=%.d)
 
 #            END TARGETS
 #¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
